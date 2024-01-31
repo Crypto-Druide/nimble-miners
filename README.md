@@ -4,7 +4,7 @@ Program to mine tokens with Nimble Network
 
 ### Introduction
 
-This repository is a subnet for text prompting with large language models (LLM). Inside, you will find miners designed by the Nimble Labs LTD team to serve language models. The current validator implementation queries the network for responses while servers responds to requests with their best completions. These completions are judged and ranked by the validators and passed to the chain.
+This repository is a subnet for text prompting with large language models (LLM). Inside, you will find miners designed by the Nimble Labs LTD team to serve language models. The current validator implementation queries the network for responses while miners responds to requests with their best completions. These completions are judged and ranked by the validators and passed to the chain.
 
 ### Install
 
