@@ -1,6 +1,7 @@
 # Nimble Miners
 
-This repo provides a set of miners for anyone to mine Nimble native tokens. It enables single machine model training and distributed training to increase your chances of successful token mining.
+This repo provides a set of miners for anyone to mine Nimble native tokens. It enables single
+machine model training and distributed training to increase your chances of successful token mining.
 
 # Development
 
@@ -117,10 +118,10 @@ options:
 
 ### Language Model Miner
 
-Nimble language model (LM) is a small (3B) language model. It is still powerful for model inferences.
+Nimble language model (LM) is a small (3B) language model. It is still powerful for model inferences. Please
+create and manage virtualenv as detailed [above](https://github.com/nimble-technology/nimble-miners?tab=readme-ov-file#virtual-env-setup).
 
 ```bash
-# create and manage virtualenv as detailed above
 # install nimbleLM dependencies
 cd miners/nimbleLM/
 python3 -m pip install -r requirements.txt
@@ -128,8 +129,8 @@ python3 -m pip install -r requirements.txt
 # Example usage of the nimbleLM miner
 python -m miners/nimbleLM/miner.py
     --netuid 1
-    --wallet.name <your miner wallet> # Must be created using the nimble-cli
-    --wallet.hotkey <your miner hotkey> # Must be created using the nimble-cli
+    --wallet.name <your miner wallet>
+    --wallet.hotkey <your miner hotkey>
     --miner.blacklist.whitelist <hotkeys of the validators to be connected>
-    --logging.debug # Run in debug mode, alternatively --logging.trace for trace mode
+    --logging.debug
 ```
