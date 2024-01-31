@@ -19,6 +19,9 @@ cd nimble-miners
 # install python3.9 or higher if not yet.
 brew install python3.9
 
+# upgrade pip
+python3 -m pip install --upgrade pip
+
 # create virtualenv
 python3 -m venv nimble-env
 
@@ -38,7 +41,27 @@ rm -rf nimble-env
 # Run Miners
 Nimble contributors provide various miners any developer can run. Developers can add more miners as well.
 
-### Full Usage
+### Language Model Miner
+
+##### Example Usage
+Nimble language model (LM) is a small (3B) language model. It is still powerful for model inferences. Please
+create and manage virtualenv as detailed [above](https://github.com/nimble-technology/nimble-miners?tab=readme-ov-file#virtual-env-setup).
+
+```bash
+# install nimbleLM dependencies
+cd miners/nimbleLM/
+python3 -m pip install -r requirements.txt
+
+# Example usage of the nimbleLM miner
+python -m miners/nimbleLM/miner.py
+    --netuid 1
+    --wallet.name <your miner wallet>
+    --wallet.hotkey <your miner hotkey>
+    --miner.blacklist.whitelist <hotkeys of the validators to be connected>
+    --logging.debug
+```
+
+##### Full Usage
 ```
 usage: miner.py [-h] [--axon.port AXON.PORT] [--nbnetwork.network NBNETWORK.NETWORK] [--nbnetwork.chain_endpoint NBNETWORK.CHAIN_ENDPOINT] [--netuid NETUID] [--miner.root MINER.ROOT] [--miner.name MINER.NAME]
                 [--miner.blocks_per_epoch MINER.BLOCKS_PER_EPOCH] [--miner.blacklist.blacklist [MINER.BLACKLIST.BLACKLIST ...]] [--miner.blacklist.whitelist [MINER.BLACKLIST.WHITELIST ...]]
@@ -116,21 +139,3 @@ options:
   --no_prompt           Set true to stop cli from prompting the user.
 ```
 
-### Language Model Miner
-
-Nimble language model (LM) is a small (3B) language model. It is still powerful for model inferences. Please
-create and manage virtualenv as detailed [above](https://github.com/nimble-technology/nimble-miners?tab=readme-ov-file#virtual-env-setup).
-
-```bash
-# install nimbleLM dependencies
-cd miners/nimbleLM/
-python3 -m pip install -r requirements.txt
-
-# Example usage of the nimbleLM miner
-python -m miners/nimbleLM/miner.py
-    --netuid 1
-    --wallet.name <your miner wallet>
-    --wallet.hotkey <your miner hotkey>
-    --miner.blacklist.whitelist <hotkeys of the validators to be connected>
-    --logging.debug
-```
