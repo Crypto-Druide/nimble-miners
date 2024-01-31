@@ -20,7 +20,7 @@ python -m pip install -e .
 Install nimbleLM miner requirements.
 
 ```bash
-cd miners/nimbleLM/miner.py
+cd miners/nimbleLM/
 python -m pip install -r requirements.txt
 ```
 
