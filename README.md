@@ -16,32 +16,42 @@ cd nimble-miners
 ### Virtual Env Setup
 
 ```bash
+# create virtualenv
+python3 -m venv nbenv
+
+# activate virtualenv
+source nbenv/bin/activate
+
 # install python3.9 or higher if not yet.
 brew install python3.9
 
 # upgrade pip
 python3 -m pip install --upgrade pip
 
-# create virtualenv
-python3 -m venv nimble-env
-
-# activate virtualenv
-source nimble-env/bin/activate
-
 # install nimble miners dependencies
 python3 -m pip install -r requirements.txt
+python3 -m pip install -e .
 
 # deactivate virtualenv
 deactivate
 
 # clean virtualenv
-rm -rf nimble-env
+rm -rf nbenv
 ```
 
 # Run Miners
 Nimble contributors provide various miners any developer can run. Developers can add more miners as well.
 
 ### Language Model Miner
+
+##### Miner Requirements
+The minimum machine requirements are:
+```bash
+CPU - Intel Core i7 12700 or equivalent
+GPU - v100 32gb
+Memory - 64gb
+Disk - 1TB
+```
 
 ##### Example Usage
 Nimble language model (LM) is a small (3B) language model. It is still powerful for model inferences. Please
