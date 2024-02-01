@@ -44,7 +44,7 @@ Nimble contributors provide various miners any developer can run. Developers can
 
 ### Language Model Miner
 
-##### Miner Requirements
+#### Miner Requirements
 The minimum machine requirements are:
 ```bash
 CPU - Intel Core i7 12700 or equivalent
@@ -53,7 +53,7 @@ Memory - 64gb
 Disk - 1TB
 ```
 
-##### Example Usage
+#### Example Usage
 Nimble language model (LM) is a small (3B) language model. It is still powerful for model inferences. Please
 create and manage virtualenv as detailed [above](https://github.com/nimble-technology/nimble-miners?tab=readme-ov-file#virtual-env-setup).
 
@@ -71,7 +71,7 @@ python -m miners/nimbleLM/miner.py
     --logging.debug
 ```
 
-##### Full Usage
+#### Full Usage
 ```
 usage: miner.py [-h] [--axon.port AXON.PORT] [--nbnetwork.network NBNETWORK.NETWORK] [--nbnetwork.chain_endpoint NBNETWORK.CHAIN_ENDPOINT] [--netuid NETUID] [--miner.root MINER.ROOT] [--miner.name MINER.NAME]
                 [--miner.blocks_per_epoch MINER.BLOCKS_PER_EPOCH] [--miner.blacklist.blacklist [MINER.BLACKLIST.BLACKLIST ...]] [--miner.blacklist.whitelist [MINER.BLACKLIST.WHITELIST ...]]
