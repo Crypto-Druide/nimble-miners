@@ -18,7 +18,7 @@
 import time
 import nimble as nb
 from typing import List, Dict, Union, Tuple, Callable
-from prompting.protocol import Prompting
+from inference.protocol import Prompting
 
 
 def record_request_timestamps(self, synapse: Prompting):

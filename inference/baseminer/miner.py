@@ -25,13 +25,13 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Tuple, Union
 
 import nimble as nb
-from prompting.protocol import Prompting
+from inference.protocol import Inference
 
-from prompting.baseminer.priority import priority
-from prompting.baseminer.blacklist import blacklist, is_prompt_in_cache
-from prompting.baseminer.run import run
-from prompting.baseminer.set_weights import set_weights
-from prompting.baseminer.config import check_config, get_config
+from inference.baseminer.priority import priority
+from inference.baseminer.blacklist import blacklist, is_prompt_in_cache
+from inference.baseminer.run import run
+from inference.baseminer.set_weights import set_weights
+from inference.baseminer.config import check_config, get_config
 
 
 class Miner(ABC):
@@ -166,7 +166,7 @@ class Miner(ABC):
         """
         ...
 
-    def _prompt(self, synapse: Prompting) -> Prompting:
+    def _prompt(self, synapse: Inference) -> Inference:
         """
         A wrapper method around the `prompt` method that will be defined by the subclass.
 
@@ -176,10 +176,10 @@ class Miner(ABC):
         cache, the subclass `prompt` method is called.
 
         Args:
-            synapse (Prompting): The incoming request object encapsulating the details of the request.
+            synapse (Inference): The incoming request object encapsulating the details of the request.
 
         Returns:
-            Prompting: The response object to be sent back in reply to the incoming request, essentially
+            Inference: The response object to be sent back in reply to the incoming request, essentially
             the filled synapse request object.
 
         Raises:
@@ -197,7 +197,7 @@ class Miner(ABC):
         return self.prompt(synapse)
 
     @abstractmethod
-    def prompt(self, synapse: Prompting) -> Prompting:
+    def prompt(self, synapse: Inference) -> Inference:
         """
         Abstract method to handle and respond to incoming requests to the miner.
 
@@ -206,23 +206,23 @@ class Miner(ABC):
         be dependent on the specific implementation provided in the subclass.
 
         Args:
-            synapse (Prompting): The incoming request object encapsulating the details
+            synapse (Inference): The incoming request object encapsulating the details
                 of the request. This must contain `messages` and `roles` as fields.
 
         Returns:
-            Prompting: The response object that should be sent back in reply to the
+            Inference: The response object that should be sent back in reply to the
                 incoming request. This is essentially the filled synapse request object.
 
         Example:
             class CustomMiner(Miner):
-                def prompt(self, synapse: Prompting) -> Prompting:
+                def prompt(self, synapse: Inference) -> Inference:
                     # Custom logic to process and respond to the request.
                     synapse.completion = "The meaning of life is 42."
                     return synapse
         """
         ...
 
-    def blacklist(self, synapse: Prompting) -> Tuple[bool, str]:
+    def blacklist(self, synapse: Inference) -> Tuple[bool, str]:
         """
         Default blacklist logic
 
@@ -240,12 +240,12 @@ class Miner(ABC):
             blacklisted (:obj:`bool`):
         """
 
-        def _blacklist(synapse: "Prompting") -> Tuple[bool, str]:
+        def _blacklist(synapse: "Inference") -> Tuple[bool, str]:
             raise NotImplementedError("blacklist not implemented in subclass")
 
         return blacklist(self, _blacklist, synapse)
 
-    def priority(self, synapse: Prompting) -> float:
+    def priority(self, synapse: Inference) -> float:
         """
         Define how miners should prioritize requests.
 
@@ -263,7 +263,7 @@ class Miner(ABC):
             priority (:obj:`float`):
         """
 
-        def _priority(synapse: "Prompting") -> bool:
+        def _priority(synapse: "Inference") -> bool:
             raise NotImplementedError("priority not implemented in subclass")
 
         return priority(self, _priority, synapse)

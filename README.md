@@ -43,6 +43,9 @@ rm -rf nbenv
 `nbcli` is the command line tool to interact with nimble network such token transfers, wallet management, staking and other operations.
 
 ```bash
+# usage: nbcli <command> <command args>
+nbcli --help
+
 # check wallet balance
 nbcli wallet overview --wallet.name miner
 
@@ -69,12 +72,12 @@ Nimble language model (LM) is a small (3B) language model. It is still powerful 
 create and manage virtualenv as detailed [above](https://github.com/nimble-technology/nimble-miners?tab=readme-ov-file#virtual-env-setup).
 
 ```bash
-# install nimbleLM dependencies
-cd miners/nimbleLM/
+# install nblm dependencies
+cd miners/nblm/
 python3 -m pip install -r requirements.txt
 
-# Example usage of the nimbleLM miner
-python -m miners/nimbleLM/miner.py
+# Example usage of the nblm miner
+python -m miners/nblm/miner.py
     --netuid 1
     --wallet.name <your miner wallet>
     --wallet.hotkey <your miner hotkey>

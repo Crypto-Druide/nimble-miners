@@ -18,7 +18,7 @@ import time
 import wandb
 import nimble as nb
 import traceback
-from prompting.protocol import Prompting
+from inference.protocol import Prompting
 from .set_weights import set_weights
 
 

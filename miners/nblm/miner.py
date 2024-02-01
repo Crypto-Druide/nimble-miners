@@ -16,37 +16,28 @@
 # DEALINGS IN THE SOFTWARE.
 
 """
-Nimble CerebrasNBLMMiner Template
-
-This template provides an implementation of a Nimble miner that uses the Cerebras NBLM model 
-for processing incoming requests from the Nimble network. The model generates responses 
-based on the context provided in the incoming requests.
-
-Developers can utilize this template as a starting point to create custom miners using 
-different models or to tweak the settings of the current model for optimal performance.
-
-Ensure the required dependencies, such as Nimble, DeepSpeed, and Transformers, are installed 
-before running this script, found at neurons/miners/nimbleLM/requirements.txt.
+Language model miner example. Miners are permissionless. Anyone can optimize and customize the models for
+best mining yields.
 """
 
+import argparse
+import deepspeed
+import nimble as nb
 import os
 import time
-import argparse
-import nimble as nb
-import deepspeed
-from typing import List, Dict
-
 import torch
+from typing import List
+
 from transformers import (
-    AutoTokenizer,
     AutoModelForCausalLM,
+    AutoTokenizer,
+    pipeline,
     StoppingCriteria,
     StoppingCriteriaList,
-    pipeline,
 )
 
-from prompting.baseminer.miner import Miner
-from prompting.protocol import Prompting
+from inference.baseminer.miner import Miner
+from inference.protocol import Inference
 
 
 class StopOnTokens(StoppingCriteria):
@@ -69,11 +60,11 @@ class StopOnTokens(StoppingCriteria):
         return False
 
 
-class CerebrasNBLMMiner(Miner):
+class NBLMMiner(Miner):
     """
-    Nimble miner implementation using the Cerebras NBLM model.
+    Nimble miner implementation using the NBLM model.
 
-    This miner processes incoming requests from the Nimble network and uses the Cerebras
+    This miner processes incoming requests from the Nimble network and uses the
     NBLM model to generate appropriate responses based on the provided context.
     """
 
@@ -150,7 +141,7 @@ class CerebrasNBLMMiner(Miner):
         sets up the model pipeline for generation. It also sets up the stopping criteria
         for the model's generation.
         """
-        super(CerebrasNBLMMiner, self).__init__(*args, **kwargs)
+        super(NBLMMiner, self).__init__(*args, **kwargs)
 
         nb.logging.info("Loading {} model...".format(self.config.nblm.model))
         model = AutoModelForCausalLM.from_pretrained(
@@ -216,11 +207,11 @@ class CerebrasNBLMMiner(Miner):
                 processed_history += "user: " + message + "\n"
         return processed_history
 
-    def prompt(self, synapse: Prompting) -> Prompting:
+    def prompt(self, synapse: Inference) -> Inference:
         """
         Processes incoming requests using the NBLM model.
 
-        This is a required method to implement and must take a `Prompting` synapse as input
+        This is a required method to implement and must take a `Inference` synapse as input
 
         This method constructs a conversation history from the incoming request and uses
         the NBLM model to generate a response based on the provided context.
@@ -249,16 +240,16 @@ class CerebrasNBLMMiner(Miner):
 
 if __name__ == "__main__":
     """
-    Main execution point for the CerebrasNBLMMiner.
+    Main execution point for the NBLMMiner.
 
-    This script initializes and runs the CerebrasNBLMMiner, connecting it to the Nimble network.
-    The miner listens for incoming requests and responds using the Cerebras NBLM model.
+    This script initializes and runs the NBLMMiner, connecting it to the Nimble network.
+    The miner listens for incoming requests and responds using the NBLM model.
 
     Developers can start the miner by executing this script. It uses the context manager to ensure
     proper cleanup of resources after the miner is stopped.
     """
     nb.debug()
-    miner = CerebrasNBLMMiner()
+    miner = NBLMMiner()
     with miner:
         while True:
             time.sleep(1)

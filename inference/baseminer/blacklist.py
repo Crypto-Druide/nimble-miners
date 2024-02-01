@@ -20,10 +20,10 @@ import wandb
 import hashlib
 import nimble as nb
 from typing import Union, Tuple, Callable, List
-from prompting.protocol import Prompting
+from inference.protocol import Inference
 
 
-async def is_prompt_in_cache(self, synapse: Prompting) -> bool:
+async def is_prompt_in_cache(self, synapse: Inference) -> bool:
     # Hashes prompt
     # Note: Could be improved using a similarity check
     async with self.lock:
@@ -55,7 +55,7 @@ async def is_prompt_in_cache(self, synapse: Prompting) -> bool:
     return should_blacklist
 
 
-def default_blacklist(self, synapse: Prompting) -> Union[Tuple[bool, str], bool]:
+def default_blacklist(self, synapse: Inference) -> Union[Tuple[bool, str], bool]:
     # Check if the key is white listed.
     if synapse.dendrite.hotkey in self.config.miner.blacklist.whitelist:
         return False, "whitelisted hotkey"
@@ -95,7 +95,7 @@ def default_blacklist(self, synapse: Prompting) -> Union[Tuple[bool, str], bool]
 
 
 def blacklist(
-    self, func: Callable, synapse: Prompting
+    self, func: Callable, synapse: Inference
 ) -> Union[Tuple[bool, str], bool]:
     nb.logging.trace("run blacklist function")
 
