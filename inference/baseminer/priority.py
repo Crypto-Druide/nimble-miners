@@ -17,11 +17,12 @@
 
 import time
 import nimble as nb
+
+from inference.protocol import Inference
 from typing import List, Dict, Union, Tuple, Callable
-from inference.protocol import Prompting
 
 
-def record_request_timestamps(self, synapse: Prompting):
+def record_request_timestamps(self, synapse: Inference):
     timestamp_length = self.config.miner.priority.len_request_timestamps
     if synapse.dendrite.hotkey not in self.request_timestamps:
         self.request_timestamps[synapse.dendrite.hotkey] = [0] * timestamp_length
@@ -34,7 +35,7 @@ def record_request_timestamps(self, synapse: Prompting):
     return self.request_timestamps
 
 
-def default_priority(self, synapse: Prompting) -> float:
+def default_priority(self, synapse: Inference) -> float:
     # Check if the key is registered.
     registered = False
     if self.metagraph is not None:
@@ -64,7 +65,7 @@ def default_priority(self, synapse: Prompting) -> float:
     return priority
 
 
-def priority(self, func: Callable, synapse: Prompting) -> float:
+def priority(self, func: Callable, synapse: Inference) -> float:
     # Check to see if the subclass has implemented a priority function.
     priority = None
     try:

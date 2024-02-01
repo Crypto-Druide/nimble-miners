@@ -18,7 +18,7 @@ import time
 import wandb
 import nimble as nb
 import traceback
-from inference.protocol import Prompting
+from inference.protocol import Inference
 from .set_weights import set_weights
 
 
@@ -61,7 +61,7 @@ def run(self):
     # Serve passes the axon information to the network + netuid we are hosting on.
     # This will auto-update if the axon port of external ip have changed.
     nb.logging.info(
-        f"Serving axon {Prompting} on network: {self.config.nbnetwork.chain_endpoint} with netuid: {self.config.netuid}"
+        f"Serving axon {Inference} on network: {self.config.nbnetwork.chain_endpoint} with netuid: {self.config.netuid}"
     )
     self.axon.serve(netuid=self.config.netuid, nbnetwork=self.nbnetwork)
 
