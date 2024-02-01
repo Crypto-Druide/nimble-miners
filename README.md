@@ -39,6 +39,17 @@ deactivate
 rm -rf nbenv
 ```
 
+### Nimble Command Line
+`nbcli` is the command line tool to interact with nimble network such token transfers, wallet management, staking and other operations.
+
+```bash
+# check wallet balance
+nbcli wallet overview --wallet.name miner
+
+# unstake
+nbcli stake remove --wallet.name miner
+```
+
 # Run Miners
 Nimble contributors provide various miners any developer can run. Developers can add more miners as well.
 
