@@ -39,12 +39,23 @@ deactivate
 rm -rf nbenv
 ```
 
-### Nimble Command Line
+# Run as Miners
+Nimble contributors provide various miners any developer can run. Developers can add more miners as well.
+
+### Nimble CLI: Wallet and Staking Management
 `nbcli` is the command line tool to interact with nimble network such token transfers, wallet management, staking and other operations.
+
+After creating wallets, please share your public keys to [Nimble Discord node-runners channel](https://discord.com/invite/nimble).
 
 ```bash
 # usage: nbcli <command> <command args>
 nbcli --help
+
+# coldkey generation
+nbcli wallet new_coldkey --wallet.name miner
+
+# hotkey generation
+nbcli wallet new_hotkey --wallet.name miner --wallet.hotkey default
 
 # check wallet balance
 nbcli wallet overview --wallet.name miner
@@ -53,8 +64,22 @@ nbcli wallet overview --wallet.name miner
 nbcli stake remove --wallet.name miner
 ```
 
-# Run Miners
-Nimble contributors provide various miners any developer can run. Developers can add more miners as well.
+### Miner Wallets
+Miners create wallets by themselves and register to start mining by contact Discord channel 
+et up the miner's wallets:
+
+```bash
+
+```
+
+Set up the validator's wallets:
+
+```bash
+nbcli wallet new_coldkey --wallet.name validator
+```
+```bash
+nbcli wallet new_hotkey --wallet.name validator --wallet.hotkey default
+```
 
 ### Language Model Miner
 
