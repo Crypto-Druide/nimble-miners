@@ -18,8 +18,8 @@
 import time
 import nimble as nb
 
-from inference.protocol import Inference
-from typing import List, Dict, Union, Tuple, Callable
+from model.inference import Inference
+from typing import List, Dict, Callable
 
 
 def record_request_timestamps(self, synapse: Inference):

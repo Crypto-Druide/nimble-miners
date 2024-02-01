@@ -25,19 +25,19 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Tuple, Union
 
 import nimble as nb
-from inference.protocol import Inference
+from model.inference import Inference
 
-from inference.baseminer.priority import priority
-from inference.baseminer.blacklist import blacklist, is_prompt_in_cache
-from inference.baseminer.run import run
-from inference.baseminer.set_weights import set_weights
-from inference.baseminer.config import check_config, get_config
+from model.lib.priority import priority
+from model.lib.blacklist import blacklist, is_request_in_cache
+from model.lib.run import run
+from model.lib.set_weights import set_weights
+from model.lib.config import check_config, get_config
 
 
 class Miner(ABC):
     """
     The Miner class is an abstract base class that defines the structure for Nimble miners.
-    Subclasses should implement the `prompt` method to define their own response logic.
+    Subclasses should implement the `predict` method to define their own response logic.
     The `blacklist` and `priority` methods can also be overridden to provide custom logic.
     """
 
@@ -59,7 +59,7 @@ class Miner(ABC):
         check_config(Miner, self.config)
         nb.logging.info(self.config)  # TODO: duplicate print?
 
-        self.prompt_cache: Dict[str, Tuple[str, int]] = {}
+        self.request_cache: Dict[str, Tuple[str, int]] = {}
 
         # Activating Nimble's logging with the set configurations.
         nb.logging(config=self.config, logging_dir=self.config.full_path)
@@ -111,7 +111,7 @@ class Miner(ABC):
         # Attach determiners which functions are called when servicing a request.
         nb.logging.info(f"Attaching forward function to axon.")
         self.axon.attach(
-            forward_fn=self._prompt,
+            forward_fn=self._predict,
             blacklist_fn=self.blacklist,
             priority_fn=self.priority,
         )
@@ -166,14 +166,14 @@ class Miner(ABC):
         """
         ...
 
-    def _prompt(self, synapse: Inference) -> Inference:
+    def _predict(self, synapse: Inference) -> Inference:
         """
-        A wrapper method around the `prompt` method that will be defined by the subclass.
+        A wrapper method around the `predict` method that will be defined by the subclass.
 
         This method acts as an intermediary layer to perform pre-processing before calling the
-        actual `prompt` method implemented in the subclass. Specifically, it checks whether a
-        prompt is in cache to avoid reprocessing recent requests. If the prompt is not in the
-        cache, the subclass `prompt` method is called.
+        actual `predict` method implemented in the subclass. Specifically, it checks whether a
+        prediction request is in cache to avoid reprocessing recent requests. If the predict is not in the
+        cache, the subclass `predict` method is called.
 
         Args:
             synapse (Inference): The incoming request object encapsulating the details of the request.
@@ -183,21 +183,21 @@ class Miner(ABC):
             the filled synapse request object.
 
         Raises:
-            ValueError: If the prompt is found in the cache indicating it was sent recently.
+            ValueError: If the request is found in the cache indicating it was sent recently.
 
         Example:
             This method is not meant to be called directly but is invoked internally when a request
-            is received, and it subsequently calls the `prompt` method of the subclass.
+            is received, and it subsequently calls the `request` method of the subclass.
         """
-        if self.config.miner.blacklist.use_prompt_cache:
-            if is_prompt_in_cache(self, synapse):
+        if self.config.miner.blacklist.use_request_cache:
+            if is_request_in_cache(self, synapse):
                 raise ValueError(
-                    f"Blacklisted: Prompt sent recently in last {self.config.miner.blacklist.prompt_cache_block_span} blocks."
+                    f"Blacklisted: Request sent recently in last {self.config.miner.blacklist.request_cache_block_span} blocks."
                 )
-        return self.prompt(synapse)
+        return self.predict(synapse)
 
     @abstractmethod
-    def prompt(self, synapse: Inference) -> Inference:
+    def predict(self, synapse: Inference) -> Inference:
         """
         Abstract method to handle and respond to incoming requests to the miner.
 
@@ -215,7 +215,7 @@ class Miner(ABC):
 
         Example:
             class CustomMiner(Miner):
-                def prompt(self, synapse: Inference) -> Inference:
+                def predict(self, synapse: Inference) -> Inference:
                     # Custom logic to process and respond to the request.
                     synapse.completion = "The meaning of life is 42."
                     return synapse

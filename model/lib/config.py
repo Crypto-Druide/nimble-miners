@@ -139,15 +139,15 @@ def get_config() -> "nb.Config":
         default=0.0,
     )
     parser.add_argument(
-        "--miner.blacklist.prompt_cache_block_span",
+        "--miner.blacklist.request_cache_block_span",
         type=int,
-        help="Amount of blocks to keep a prompt in cache",
+        help="Amount of blocks to keep a request in cache",
         default=7200,
     )
     parser.add_argument(
-        "--miner.blacklist.use_prompt_cache",
+        "--miner.blacklist.use_request_cache",
         action="store_true",
-        help="If True, the miner will use the prompt cache to store recent request prompts.",
+        help="If True, the miner will use the request cache to store recent requests.",
         default=False,
     )
     parser.add_argument(

@@ -20,37 +20,37 @@ import wandb
 import hashlib
 import nimble as nb
 from typing import Union, Tuple, Callable, List
-from inference.protocol import Inference
+from model.inference import Inference
 
 
-async def is_prompt_in_cache(self, synapse: Inference) -> bool:
-    # Hashes prompt
+async def is_request_in_cache(self, synapse: Inference) -> bool:
+    # Hashes request
     # Note: Could be improved using a similarity check
     async with self.lock:
-        prompt = json.dumps(list(synapse.messages))
-        prompt_key = hashlib.sha256(prompt.encode()).hexdigest()
+        request = json.dumps(list(synapse.messages))
+        request_key = hashlib.sha256(request.encode()).hexdigest()
         current_block = self.metagraph.block
 
         should_blacklist: bool
-        # Check if prompt is in cache, if not add it
-        if prompt_key in self.prompt_cache:
+        # Check if request is in cache, if not add it
+        if request_key in self.request_cache:
             should_blacklist = True
         else:
             caller_hotkey = synapse.dendrite.hotkey
-            self.prompt_cache[prompt_key] = current_block
+            self.request_cache[request_key] = current_block
             should_blacklist = False
 
         # Sanitize cache by removing old entries according to block span
         keys_to_remove = []
-        for key, block in self.prompt_cache.items():
+        for key, block in self.request_cache.items():
             if (
-                block + self.config.miner.blacklist.prompt_cache_block_span
+                block + self.config.miner.blacklist.request_cache_block_span
                 < current_block
             ):
                 keys_to_remove.append(key)
 
         for key in keys_to_remove:
-            del self.prompt_cache[key]
+            del self.request_cache[key]
 
     return should_blacklist
 

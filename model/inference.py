@@ -36,7 +36,7 @@ class Inference(nb.Synapse):
     Attributes:
         roles (List[str]): A list of roles in the inference scenario. This field is both mandatory and immutable.
         messages (List[str]): A list of messages in the inference scenario. This field is both mandatory and immutable.
-        completion (str): A string that captures completion of the prompt. This field is mutable.
+        completion (str): A string that captures completion of the request. This field is mutable.
         required_hash_fields List[str]: A list of fields that are required for the hash.
 
     Methods:
@@ -51,19 +51,19 @@ class Inference(nb.Synapse):
 
     ```python
     # Create a Inference instance
-    prompt = Inference(roles=["system", "user"], messages=["Hello", "Hi"])
+    inference = Inference(roles=["system", "user"], messages=["Hello", "Hi"])
 
     # Print the roles and messages
-    print("Roles:", prompt.roles)
-    print("Messages:", prompt.messages)
+    print("Roles:", inference.roles)
+    print("Messages:", inference.messages)
 
     # Update the completion
-    model_prompt =... # Use prompt.roles and prompt.messages to generate a prompt
+    model_inference =... # Use inference.roles and inference.messages to generate an inference
     for your LLM as a single string.
-    prompt.completion = model(model_prompt)
+    inference.completion = model(model_inference)
 
     # Print the completion
-    print("Completion:", prompt.completion)
+    print("Completion:", inference.completion)
     ```
 
     This will output:
@@ -130,18 +130,18 @@ class StreamInference(nb.StreamingSynapse):
     """
     StreamInference is a specialized implementation of the `StreamingSynapse` tailored for inference functionalities within
     the nimble network. This class is intended to interact with a streaming response that contains a sequence of tokens,
-    which represent prompts or messages in a certain scenario.
+    which represent inferences or messages in a certain scenario.
 
     As a developer, when using or extending the `StreamInference` class, you should be primarily focused on the structure
-    and behavior of the prompts you are working with. The class has been designed to seamlessly handle the streaming,
-    decoding, and accumulation of tokens that represent these prompts.
+    and behavior of the inferences you are working with. The class has been designed to seamlessly handle the streaming,
+    decoding, and accumulation of tokens that represent these inferences.
 
     Attributes:
     - `roles` (List[str]): A list of roles involved in the inference scenario. This could represent different entities
                            or agents involved in the conversation or use-case. They are immutable to ensure consistent
                            interaction throughout the lifetime of the object.
 
-    - `messages` (List[str]): These represent the actual prompts or messages in the inference scenario. They are also
+    - `messages` (List[str]): These represent the actual inferences or messages in the inference scenario. They are also
                               immutable to ensure consistent behavior during processing.
 
     - `completion` (str): Stores the processed result of the streaming tokens. As tokens are streamed, decoded, and
@@ -193,7 +193,7 @@ class StreamInference(nb.StreamingSynapse):
         """
         `process_streaming_response` is an asynchronous method designed to process the incoming streaming response from the
         nimble network. It's the heart of the StreamInference class, ensuring that streaming tokens, which represent
-        prompts or messages, are decoded and appropriately managed.
+        inferences or messages, are decoded and appropriately managed.
 
         As the streaming response is consumed, the tokens are decoded from their 'utf-8' encoded format, split based on
         newline characters, and concatenated into the `completion` attribute. This accumulation of decoded tokens in the
@@ -201,7 +201,7 @@ class StreamInference(nb.StreamingSynapse):
 
         Args:
             response: The streaming response object containing the content chunks to be processed. Each chunk in this
-                      response is expected to be a set of tokens that can be decoded and split into individual messages or prompts.
+                      response is expected to be a set of tokens that can be decoded and split into individual messages or inferences.
         """
         if self.completion is None:
             self.completion = ""

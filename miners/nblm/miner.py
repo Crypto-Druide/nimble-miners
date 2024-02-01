@@ -36,8 +36,8 @@ from transformers import (
     StoppingCriteriaList,
 )
 
-from inference.baseminer.miner import Miner
-from inference.protocol import Inference
+from model.lib.miner import Miner
+from model.inference import Inference
 
 
 class StopOnTokens(StoppingCriteria):
@@ -109,15 +109,15 @@ class NBLMMiner(Miner):
             help="The size of the n-grams to avoid repeating in the generated text.",
         )
         parser.add_argument(
-            "--nblm.do_prompt_injection",
+            "--nblm.do_request_injection",
             action="store_true",
             default=False,
-            help='Whether to use a custom "system" prompt instead of the one sent by nimble.',
+            help='Whether to use a custom "system" request instead of the one sent by nimble.',
         )
         parser.add_argument(
-            "--nblm.system_prompt",
+            "--nblm.system_request",
             type=str,
-            help="What prompt to replace the system prompt with",
+            help="What request to replace the system request with",
             default="A chat between a curious user and an artificial intelligence assistant.\nThe assistant gives helpful, detailed, and polite answers to the user's questions. ",
         )
         parser.add_argument(
@@ -191,15 +191,15 @@ class NBLMMiner(Miner):
         Processes the conversation history for model input.
 
         This method takes the roles and messages from the incoming request and constructs
-        a conversation history suitable for model input. It also injects a system prompt
+        a conversation history suitable for model input. It also injects a system request
         if the configuration specifies to do so.
         """
         processed_history = ""
-        if self.config.nblm.do_prompt_injection:
-            processed_history += self.config.nblm.system_prompt
+        if self.config.nblm.do_request_injection:
+            processed_history += self.config.nblm.system_request
         for role, message in zip(roles, messages):
             if role == "system":
-                if not self.config.nblm.do_prompt_injection or message != messages[0]:
+                if not self.config.nblm.do_request_injection or message != messages[0]:
                     processed_history += "system: " + message + "\n"
             if role == "assistant":
                 processed_history += "assistant: " + message + "\n"
@@ -207,7 +207,7 @@ class NBLMMiner(Miner):
                 processed_history += "user: " + message + "\n"
         return processed_history
 
-    def prompt(self, synapse: Inference) -> Inference:
+    def predict(self, synapse: Inference) -> Inference:
         """
         Processes incoming requests using the NBLM model.
 

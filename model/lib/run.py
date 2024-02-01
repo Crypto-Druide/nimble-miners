@@ -18,7 +18,7 @@ import time
 import wandb
 import nimble as nb
 import traceback
-from inference.protocol import Inference
+from model.inference import Inference
 from .set_weights import set_weights
 
 
