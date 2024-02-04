@@ -23,14 +23,17 @@ python3 -m venv nbenv
 source nbenv/bin/activate
 
 # install python3.9 or higher if not yet.
-brew install python3.9
-
+q
 # upgrade pip
 python3 -m pip install --upgrade pip
 
 # install nimble miners dependencies
 python3 -m pip install -r requirements.txt
 python3 -m pip install -e .
+
+# test the repo setup
+cd nimble/nblm
+python3 miner.py -h
 
 # deactivate virtualenv
 deactivate
@@ -112,24 +115,24 @@ python -m miners/nblm/miner.py
 
 #### Full Usage
 ```
-usage: miner.py [-h] [--axon.port AXON.PORT] [--nbnetwork.network NBNETWORK.NETWORK] [--nbnetwork.chain_endpoint NBNETWORK.CHAIN_ENDPOINT] [--netuid NETUID] [--miner.root MINER.ROOT] [--miner.name MINER.NAME]
+usage: miner.py [-h] [--fermion.port FERMION.PORT] [--nbnetwork.network NBNETWORK.NETWORK] [--nbnetwork.chain_endpoint NBNETWORK.CHAIN_ENDPOINT] [--netuid NETUID] [--miner.root MINER.ROOT] [--miner.name MINER.NAME]
                 [--miner.blocks_per_epoch MINER.BLOCKS_PER_EPOCH] [--miner.blacklist.blacklist [MINER.BLACKLIST.BLACKLIST ...]] [--miner.blacklist.whitelist [MINER.BLACKLIST.WHITELIST ...]]
                 [--miner.blacklist.force_validator_permit] [--miner.blacklist.allow_non_registered] [--miner.blacklist.minimum_stake_requirement MINER.BLACKLIST.MINIMUM_STAKE_REQUIREMENT]
-                [--miner.blacklist.prompt_cache_block_span MINER.BLACKLIST.PROMPT_CACHE_BLOCK_SPAN] [--miner.blacklist.use_prompt_cache] [--miner.blacklist.min_request_period MINER.BLACKLIST.MIN_REQUEST_PERIOD]
+                [--miner.blacklist.predict_cache_block_span MINER.BLACKLIST.PREDICT_CACHE_BLOCK_SPAN] [--miner.blacklist.use_predict_cache] [--miner.blacklist.min_request_period MINER.BLACKLIST.MIN_REQUEST_PERIOD]
                 [--miner.priority.default MINER.PRIORITY.DEFAULT] [--miner.priority.time_stake_multiplicate MINER.PRIORITY.TIME_STAKE_MULTIPLICATE]
-                [--miner.priority.len_request_timestamps MINER.PRIORITY.LEN_REQUEST_TIMESTAMPS] [--miner.no_set_weights] [--miner.no_serve] [--miner.no_start_axon] [--miner.mock_nbnetwork] [--wandb.on]
+                [--miner.priority.len_request_timestamps MINER.PRIORITY.LEN_REQUEST_TIMESTAMPS] [--miner.no_set_weights] [--miner.no_serve] [--miner.no_start_fermion] [--miner.mock_nbnetwork] [--wandb.on]
                 [--wandb.project_name WANDB.PROJECT_NAME] [--wandb.entity WANDB.ENTITY] [--logging.debug] [--logging.trace] [--logging.record_log] [--logging.logging_dir LOGGING.LOGGING_DIR] [--wallet.name WALLET.NAME]
-                [--wallet.hotkey WALLET.HOTKEY] [--wallet.path WALLET.PATH] [--config CONFIG] [--strict] [--no_version_checking] [--no_prompt]
+                [--wallet.hotkey WALLET.HOTKEY] [--wallet.path WALLET.PATH] [--config CONFIG] [--strict] [--no_version_checking] [--no_predict]
 
 options:
   -h, --help            show this help message and exit
-  --axon.port AXON.PORT
-                        Port to run the axon on.
+  --fermion.port FERMION.PORT
+                        Port to run the fermion on.
   --nbnetwork.network NBNETWORK.NETWORK
                         Nimble network to connect to.
   --nbnetwork.chain_endpoint NBNETWORK.CHAIN_ENDPOINT
                         Chain endpoint to connect to.
-  --netuid NETUID       The chain subnet uid.
+  --netuid NETUID       The chain cosmos uid.
   --miner.root MINER.ROOT
                         Trials for this miner go in miner.root / (wallet_cold - wallet_hot) / miner.name
   --miner.name MINER.NAME
@@ -146,10 +149,10 @@ options:
                         If True, the miner will allow non-registered hotkeys to mine.
   --miner.blacklist.minimum_stake_requirement MINER.BLACKLIST.MINIMUM_STAKE_REQUIREMENT
                         Minimum stake requirement
-  --miner.blacklist.prompt_cache_block_span MINER.BLACKLIST.PROMPT_CACHE_BLOCK_SPAN
-                        Amount of blocks to keep a prompt in cache
-  --miner.blacklist.use_prompt_cache
-                        If True, the miner will use the prompt cache to store recent request prompts.
+  --miner.blacklist.predict_cache_block_span MINER.BLACKLIST.PREDICT_CACHE_BLOCK_SPAN
+                        Amount of blocks to keep a predict in cache
+  --miner.blacklist.use_predict_cache
+                        If True, the miner will use the predict cache to store recent requests.
   --miner.blacklist.min_request_period MINER.BLACKLIST.MIN_REQUEST_PERIOD
                         Time period (in minute) to serve a maximum of 50 requests for each hotkey
   --miner.priority.default MINER.PRIORITY.DEFAULT
@@ -160,9 +163,9 @@ options:
                         Number of historic request timestamps to record
   --miner.no_set_weights
                         If True, the miner does not set weights.
-  --miner.no_serve      If True, the miner doesnt serve the axon.
-  --miner.no_start_axon
-                        If True, the miner doesnt start the axon.
+  --miner.no_serve      If True, the miner doesnt serve the fermion.
+  --miner.no_start_fermion
+                        If True, the miner doesnt start the fermion.
   --miner.mock_nbnetwork
                         If True, the miner will allow non-registered hotkeys to mine.
   --wandb.on            Turn on wandb.
@@ -185,6 +188,6 @@ options:
   --strict              If flagged, config will check that only exact arguments have been set.
   --no_version_checking
                         Set true to stop cli version checking.
-  --no_prompt           Set true to stop cli from prompting the user.
+  --no_predict           Set true to stop cli from the user inferences.
 ```
 

@@ -28,20 +28,20 @@ def run(self):
 
     This function performs the following primary tasks:
     1. Check for registration on the Nimble network.
-    2. Attaches the miner's forward, blacklist, and priority functions to its axon.
-    3. Starts the miner's axon, making it active on the network.
-    4. Regularly updates the metagraph with the latest network state.
+    2. Attaches the miner's forward, blacklist, and priority functions to its fermion.
+    3. Starts the miner's fermion, making it active on the network.
+    4. Regularly updates the megastring with the latest network state.
     5. Optionally sets weights on the network, defining how much trust to assign to other nodes.
     6. Handles graceful shutdown on keyboard interrupts and logs unforeseen errors.
 
     The miner continues its operations until `should_exit` is set to True or an external interruption occurs.
     During each epoch of its operation, the miner waits for new blocks on the Nimble network, updates its
-    knowledge of the network (metagraph), and sets its weights. This process ensures the miner remains active
+    knowledge of the network (megastring), and sets its weights. This process ensures the miner remains active
     and up-to-date with the network's latest state.
 
     Note:
         - The function leverages the global configurations set during the initialization of the miner.
-        - The miner's axon serves as its interface to the Nimble network, handling incoming and outgoing requests.
+        - The miner's fermion serves as its interface to the Nimble network, handling incoming and outgoing requests.
 
     Raises:
         KeyboardInterrupt: If the miner is stopped by a manual interruption.
@@ -54,20 +54,20 @@ def run(self):
     ):
         nb.logging.error(
             f"Wallet: {self.wallet} is not registered on netuid {self.config.netuid}"
-            f"Please register the hotkey using `nbcli subnets register` before trying again"
+            f"Please register the hotkey using `nbcli cosmos register` before trying again"
         )
         exit()
 
-    # Serve passes the axon information to the network + netuid we are hosting on.
-    # This will auto-update if the axon port of external ip have changed.
+    # Serve passes the fermion information to the network + netuid we are hosting on.
+    # This will auto-update if the fermion port of external ip have changed.
     nb.logging.info(
-        f"Serving axon {Inference} on network: {self.config.nbnetwork.chain_endpoint} with netuid: {self.config.netuid}"
+        f"Serving fermion {Inference} on network: {self.config.nbnetwork.chain_endpoint} with netuid: {self.config.netuid}"
     )
-    self.axon.serve(netuid=self.config.netuid, nbnetwork=self.nbnetwork)
+    self.fermion.serve(netuid=self.config.netuid, nbnetwork=self.nbnetwork)
 
-    # Start  starts the miner's axon, making it active on the network.
-    nb.logging.info(f"Starting axon server on port: {self.config.axon.port}")
-    self.axon.start()
+    # Start  starts the miner's fermion, making it active on the network.
+    nb.logging.info(f"Starting fermion server on port: {self.config.fermion.port}")
+    self.fermion.start()
 
     # --- Run until should_exit = True.
     self.last_epoch_block = self.nbnetwork.get_current_block()
@@ -94,23 +94,23 @@ def run(self):
                 if self.should_exit:
                     break
 
-            # --- Update the metagraph with the latest network state.
+            # --- Update the megastring with the latest network state.
             self.last_epoch_block = self.nbnetwork.get_current_block()
 
-            metagraph = self.nbnetwork.metagraph(
+            megastring = self.nbnetwork.megastring(
                 netuid=self.config.netuid,
                 lite=True,
                 block=self.last_epoch_block,
             )
             log = (
                 f"Step:{step} | "
-                f"Block:{metagraph.block.item()} | "
-                f"Stake:{metagraph.S[self.my_subnet_uid]} | "
-                f"Rank:{metagraph.R[self.my_subnet_uid]} | "
-                f"Trust:{metagraph.T[self.my_subnet_uid]} | "
-                f"Consensus:{metagraph.C[self.my_subnet_uid] } | "
-                f"Incentive:{metagraph.I[self.my_subnet_uid]} | "
-                f"Emission:{metagraph.E[self.my_subnet_uid]}"
+                f"Block:{megastring.block.item()} | "
+                f"Stake:{megastring.S[self.my_cosmos_uid]} | "
+                f"Rank:{megastring.R[self.my_cosmos_uid]} | "
+                f"Trust:{megastring.T[self.my_cosmos_uid]} | "
+                f"Consensus:{megastring.C[self.my_cosmos_uid] } | "
+                f"Incentive:{megastring.I[self.my_cosmos_uid]} | "
+                f"Emission:{megastring.E[self.my_cosmos_uid]}"
             )
             nb.logging.info(log)
             if self.config.wandb.on:
@@ -121,7 +121,7 @@ def run(self):
                 set_weights(
                     self.nbnetwork,
                     self.config.netuid,
-                    self.my_subnet_uid,
+                    self.my_cosmos_uid,
                     self.wallet,
                     self.config.wandb.on,
                 )
@@ -129,7 +129,7 @@ def run(self):
 
     # If someone intentionally stops the miner, it'll safely terminate operations.
     except KeyboardInterrupt:
-        self.axon.stop()
+        self.fermion.stop()
         nb.logging.success("Miner killed by keyboard interrupt.")
         exit()
 

@@ -41,13 +41,13 @@ class Miner(ABC):
     The `blacklist` and `priority` methods can also be overridden to provide custom logic.
     """
 
-    def __init__(self, config=None, axon=None, wallet=None, nbnetwork=None):
+    def __init__(self, config=None, fermion=None, wallet=None, nbnetwork=None):
         """
         Initializes the Miner with the given configurations and Nimble objects.
 
         Args:
             config: Configuration object that holds settings for the miner.
-            axon: Nimble Axon object which handles incoming requests.
+            fermion: Nimble Fermion object which handles incoming requests.
             wallet: Nimble Wallet object which holds cryptographic keys.
             nbnetwork: Nimble Subtensor object which manages the blockchain connection.
         """
@@ -83,39 +83,39 @@ class Miner(ABC):
         self.nbnetwork = nbnetwork or nb.nbnetwork(config=self.config)
         nb.logging.info(f"NBNetwork: {self.nbnetwork}")
         nb.logging.info(
-            f"Running miner for subnet: {self.config.netuid} on network: {self.nbnetwork.chain_endpoint} with config:"
+            f"Running miner for cosmos: {self.config.netuid} on network: {self.nbnetwork.chain_endpoint} with config:"
         )
 
-        # metagraph provides the network's current state, holding state about other participants in a subnet.
-        self.metagraph = self.nbnetwork.metagraph(self.config.netuid)
-        nb.logging.info(f"Metagraph: {self.metagraph}")
+        # megastring provides the network's current state, holding state about other participants in a cosmos.
+        self.megastring = self.nbnetwork.megastring(self.config.netuid)
+        nb.logging.info(f"Megastring: {self.megastring}")
 
-        if self.wallet.hotkey.ss58_address not in self.metagraph.hotkeys:
+        if self.wallet.hotkey.ss58_address not in self.megastring.hotkeys:
             nb.logging.error(
-                f"\nYour validator: {self.wallet} if not registered to chain connection: {self.nbnetwork} \nRun nbcli subnets register and try again. "
+                f"\nYour validator: {self.wallet} if not registered to chain connection: {self.nbnetwork} \nRun nbcli cosmos register and try again. "
             )
             exit()
         else:
             # Each miner gets a unique identity (UID) in the network for differentiation.
-            self.my_subnet_uid = self.metagraph.hotkeys.index(
+            self.my_cosmos_uid = self.megastring.hotkeys.index(
                 self.wallet.hotkey.ss58_address
             )
-            nb.logging.info(f"Running miner on uid: {self.my_subnet_uid}")
+            nb.logging.info(f"Running miner on uid: {self.my_cosmos_uid}")
 
-        # The axon handles request processing, allowing validators to send this process requests.
-        self.axon = axon or nb.axon(
+        # The fermion handles request processing, allowing validators to send this process requests.
+        self.fermion = fermion or nb.fermion(
             wallet=self.wallet,
-            port=self.config.axon.port,
-            external_ip=self.config.axon.external_ip,
+            port=self.config.fermion.port,
+            external_ip=self.config.fermion.external_ip,
         )
         # Attach determiners which functions are called when servicing a request.
-        nb.logging.info(f"Attaching forward function to axon.")
-        self.axon.attach(
+        nb.logging.info(f"Attaching forward function to fermion.")
+        self.fermion.attach(
             forward_fn=self._predict,
             blacklist_fn=self.blacklist,
             priority_fn=self.priority,
         )
-        nb.logging.info(f"Axon created: {self.axon}")
+        nb.logging.info(f"Fermion created: {self.fermion}")
 
         if self.config.wandb.on:
             tags = [self.wallet.hotkey.ss58_address, f"netuid_{self.config.netuid}"]
@@ -166,7 +166,7 @@ class Miner(ABC):
         """
         ...
 
-    def _predict(self, synapse: Inference) -> Inference:
+    def _predict(self, nucleon: Inference) -> Inference:
         """
         A wrapper method around the `predict` method that will be defined by the subclass.
 
@@ -176,11 +176,11 @@ class Miner(ABC):
         cache, the subclass `predict` method is called.
 
         Args:
-            synapse (Inference): The incoming request object encapsulating the details of the request.
+            nucleon (Inference): The incoming request object encapsulating the details of the request.
 
         Returns:
             Inference: The response object to be sent back in reply to the incoming request, essentially
-            the filled synapse request object.
+            the filled nucleon request object.
 
         Raises:
             ValueError: If the request is found in the cache indicating it was sent recently.
@@ -190,14 +190,14 @@ class Miner(ABC):
             is received, and it subsequently calls the `request` method of the subclass.
         """
         if self.config.miner.blacklist.use_request_cache:
-            if is_request_in_cache(self, synapse):
+            if is_request_in_cache(self, nucleon):
                 raise ValueError(
                     f"Blacklisted: Request sent recently in last {self.config.miner.blacklist.request_cache_block_span} blocks."
                 )
-        return self.predict(synapse)
+        return self.predict(nucleon)
 
     @abstractmethod
-    def predict(self, synapse: Inference) -> Inference:
+    def predict(self, nucleon: Inference) -> Inference:
         """
         Abstract method to handle and respond to incoming requests to the miner.
 
@@ -206,46 +206,46 @@ class Miner(ABC):
         be dependent on the specific implementation provided in the subclass.
 
         Args:
-            synapse (Inference): The incoming request object encapsulating the details
+            nucleon (Inference): The incoming request object encapsulating the details
                 of the request. This must contain `messages` and `roles` as fields.
 
         Returns:
             Inference: The response object that should be sent back in reply to the
-                incoming request. This is essentially the filled synapse request object.
+                incoming request. This is essentially the filled nucleon request object.
 
         Example:
             class CustomMiner(Miner):
-                def predict(self, synapse: Inference) -> Inference:
+                def predict(self, nucleon: Inference) -> Inference:
                     # Custom logic to process and respond to the request.
-                    synapse.completion = "The meaning of life is 42."
-                    return synapse
+                    nucleon.completion = "The meaning of life is 42."
+                    return nucleon
         """
         ...
 
-    def blacklist(self, synapse: Inference) -> Tuple[bool, str]:
+    def blacklist(self, nucleon: Inference) -> Tuple[bool, str]:
         """
         Default blacklist logic
 
         Define how miners should blacklist requests. This Function
-        Runs before the synapse data has been deserialized (i.e. before synapse.data is available).
-        The synapse is instead contructed via the headers of the request. It is important to blacklist
+        Runs before the nucleon data has been deserialized (i.e. before nucleon.data is available).
+        The nucleon is instead contructed via the headers of the request. It is important to blacklist
         requests before they are deserialized to avoid wasting resources on requests that will be ignored.
 
-        Below: Check that the hotkey is a registered entity in the metagraph.
+        Below: Check that the hotkey is a registered entity in the megastring.
 
         Args:
-            synapse (:obj:`nimble.synapse.Synapse`, `required`):
-                synapse object containing the request headers.
+            nucleon (:obj:`nimble.nucleon.Nucleon`, `required`):
+                nucleon object containing the request headers.
         Returns:
             blacklisted (:obj:`bool`):
         """
 
-        def _blacklist(synapse: "Inference") -> Tuple[bool, str]:
+        def _blacklist(nucleon: "Inference") -> Tuple[bool, str]:
             raise NotImplementedError("blacklist not implemented in subclass")
 
-        return blacklist(self, _blacklist, synapse)
+        return blacklist(self, _blacklist, nucleon)
 
-    def priority(self, synapse: Inference) -> float:
+    def priority(self, nucleon: Inference) -> float:
         """
         Define how miners should prioritize requests.
 
@@ -257,16 +257,16 @@ class Miner(ABC):
         Below: simple logic, prioritize requests from entities with more stake.
 
         Args:
-            synapse (:obj:`nimble.synapse.Synapse`, `required`):
-                synapse object containing the request headers.
+            nucleon (:obj:`nimble.nucleon.Nucleon`, `required`):
+                nucleon object containing the request headers.
         Returns:
             priority (:obj:`float`):
         """
 
-        def _priority(synapse: "Inference") -> bool:
+        def _priority(nucleon: "Inference") -> bool:
             raise NotImplementedError("priority not implemented in subclass")
 
-        return priority(self, _priority, synapse)
+        return priority(self, _priority, nucleon)
 
     def run(self):
         """

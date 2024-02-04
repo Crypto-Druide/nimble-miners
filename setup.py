@@ -67,10 +67,10 @@ with codecs.open(
 setup(
     name="model",
     version=version_string,
-    description="The flagship Nimble subnet focused on text-based intellgience and comprehension.",
+    description="The flagship Nimble cosmos focused on text-based intellgience and comprehension.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/nimble-technology/subnet-1",
+    url="https://github.com/nimble-technology/cosmos-1",
     author="nimble.technology",
     packages=find_packages(),
     include_package_data=True,

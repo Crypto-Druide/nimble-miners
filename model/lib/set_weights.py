@@ -42,7 +42,7 @@ def set_weights(
 
     Args:
         nbnetwork (nb.nbnetwork): The Nimble object managing the blockchain connection.
-        netuid (int): The unique identifier for the chain subnet.
+        netuid (int): The unique identifier for the chain cosmos.
         uid (int): The unique identifier for the miner on the network.
         wallet (nb.wallet): The miner's wallet holding cryptographic information.
         wandb_on (bool, optional): Flag to determine if logging to Weights & Biases is enabled. Defaults to False.
@@ -52,7 +52,7 @@ def set_weights(
     """
     try:
         # --- query the chain for the most current number of peers on the network
-        chain_weights = torch.zeros(nbnetwork.subnetwork_n(netuid=netuid))
+        chain_weights = torch.zeros(nbnetwork.cosmos_n(netuid=netuid))
         chain_weights[uid] = 1
 
         # --- Set weights.

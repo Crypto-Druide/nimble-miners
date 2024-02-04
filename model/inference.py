@@ -22,9 +22,9 @@ from starlette.responses import StreamingResponse
 from typing import List
 
 
-class Inference(nb.Synapse):
+class Inference(nb.Nucleon):
     """
-    The Inference subclass of the Synapse class encapsulates the functionalities related to inference scenarios.
+    The Inference subclass of the Nucleon class encapsulates the functionalities related to inference scenarios.
 
     It specifies three fields - `roles`, `messages` and `completion` - that define the state of the Inference object.
     The `roles` and `messages` are read-only fields defined during object initialization, and `completion` is a mutable
@@ -126,9 +126,9 @@ class Inference(nb.Synapse):
     )
 
 
-class StreamInference(nb.StreamingSynapse):
+class StreamInference(nb.StreamingNucleon):
     """
-    StreamInference is a specialized implementation of the `StreamingSynapse` tailored for inference functionalities within
+    StreamInference is a specialized implementation of the `StreamingNucleon` tailored for inference functionalities within
     the nimble network. This class is intended to interact with a streaming response that contains a sequence of tokens,
     which represent inferences or messages in a certain scenario.
 
@@ -228,7 +228,7 @@ class StreamInference(nb.StreamingSynapse):
         or when debugging response-related issues.
 
         Beyond just extracting the JSON data, the method also processes and structures the data for easier consumption
-        and understanding. For instance, it extracts specific headers related to dendrite and axon, offering insights
+        and understanding. For instance, it extracts specific headers related to boson and fermion, offering insights
         about the nimble network's internal processes. The method ultimately returns a dictionary with a structured
         view of the extracted data.
 
@@ -239,7 +239,7 @@ class StreamInference(nb.StreamingSynapse):
         Returns:
             dict: A structured dictionary containing:
                 - Basic response metadata such as name, timeout, total_size, and header_size.
-                - Dendrite and Axon related information extracted from headers.
+                - Boson and Fermion related information extracted from headers.
                 - Roles and Messages pertaining to the current StreamInference instance.
                 - The accumulated completion.
         """
@@ -260,8 +260,8 @@ class StreamInference(nb.StreamingSynapse):
             "timeout": float(headers.get("timeout", 0)),
             "total_size": int(headers.get("total_size", 0)),
             "header_size": int(headers.get("header_size", 0)),
-            "dendrite": extract_info("nb_header_dendrite"),
-            "axon": extract_info("nb_header_axon"),
+            "boson": extract_info("nb_header_boson"),
+            "fermion": extract_info("nb_header_fermion"),
             "roles": self.roles,
             "messages": self.messages,
             "completion": self.completion,

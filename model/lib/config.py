@@ -23,7 +23,7 @@ import nimble as nb
 def check_config(cls, config: "nb.Config"):
     """
     Validates the given configuration for the Miner by ensuring all necessary settings
-    and directories are correctly set up. It checks the config for axon, wallet, logging,
+    and directories are correctly set up. It checks the config for fermion, wallet, logging,
     and nbnetwork. Additionally, it ensures that the logging directory exists or creates one.
 
     Args:
@@ -31,10 +31,10 @@ def check_config(cls, config: "nb.Config"):
         config (nb.Config): The configuration object holding various settings for the miner.
 
     Raises:
-        Various exceptions can be raised by the check_config methods of axon, wallet, logging,
+        Various exceptions can be raised by the check_config methods of fermion, wallet, logging,
         and nbnetwork if the configurations are not valid.
     """
-    nb.axon.check_config(config)
+    nb.fermion.check_config(config)
     nb.logging.check_config(config)
     full_path = os.path.expanduser(
         "{}/{}/{}/{}".format(
@@ -80,7 +80,7 @@ def get_config() -> "nb.Config":
         help="Chain endpoint to connect to.",
     )
     # Adds override arguments for network and netuid.
-    parser.add_argument("--netuid", type=int, default=1, help="The chain subnet uid.")
+    parser.add_argument("--netuid", type=int, default=1, help="The chain cosmos uid.")
 
     parser.add_argument(
         "--miner.root",
@@ -186,13 +186,13 @@ def get_config() -> "nb.Config":
     parser.add_argument(
         "--miner.no_serve",
         action="store_true",
-        help="If True, the miner doesnt serve the axon.",
+        help="If True, the miner doesnt serve the fermion.",
         default=False,
     )
     parser.add_argument(
-        "--miner.no_start_axon",
+        "--miner.no_start_fermion",
         action="store_true",
-        help="If True, the miner doesnt start the axon.",
+        help="If True, the miner doesnt start the fermion.",
         default=False,
     )
 
@@ -230,8 +230,8 @@ def get_config() -> "nb.Config":
     # Adds wallet specific arguments i.e. --wallet.name ..., --wallet.hotkey ./. or --wallet.path ...
     nb.wallet.add_args(parser)
 
-    # Adds axon specific arguments i.e. --axon.port ...
-    nb.axon.add_args(parser)
+    # Adds fermion specific arguments i.e. --fermion.port ...
+    nb.fermion.add_args(parser)
 
     # Activating the parser to read any command-line inputs.
     # To print help message, run python3 template/miner.py --help

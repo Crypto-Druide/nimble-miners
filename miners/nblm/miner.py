@@ -207,16 +207,16 @@ class NBLMMiner(Miner):
                 processed_history += "user: " + message + "\n"
         return processed_history
 
-    def predict(self, synapse: Inference) -> Inference:
+    def predict(self, nucleon: Inference) -> Inference:
         """
         Processes incoming requests using the NBLM model.
 
-        This is a required method to implement and must take a `Inference` synapse as input
+        This is a required method to implement and must take a `Inference` nucleon as input
 
         This method constructs a conversation history from the incoming request and uses
         the NBLM model to generate a response based on the provided context.
         """
-        history = self._process_history(roles=synapse.roles, messages=synapse.messages)
+        history = self._process_history(roles=nucleon.roles, messages=nucleon.messages)
         history += "assistant: "
         nb.logging.debug("History: {}".format(history))
         completion = (
@@ -234,8 +234,8 @@ class NBLMMiner(Miner):
             .replace(str(history), "")
         )
         nb.logging.debug("Completion: {}".format(completion))
-        synapse.completion = completion
-        return synapse
+        nucleon.completion = completion
+        return nucleon
 
 
 if __name__ == "__main__":

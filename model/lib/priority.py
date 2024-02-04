@@ -22,36 +22,36 @@ from model.inference import Inference
 from typing import List, Dict, Callable
 
 
-def record_request_timestamps(self, synapse: Inference):
+def record_request_timestamps(self, nucleon: Inference):
     timestamp_length = self.config.miner.priority.len_request_timestamps
-    if synapse.dendrite.hotkey not in self.request_timestamps:
-        self.request_timestamps[synapse.dendrite.hotkey] = [0] * timestamp_length
+    if nucleon.boson.hotkey not in self.request_timestamps:
+        self.request_timestamps[nucleon.boson.hotkey] = [0] * timestamp_length
 
-    self.request_timestamps[synapse.dendrite.hotkey].append(time.time())
-    self.request_timestamps[synapse.dendrite.hotkey] = self.request_timestamps[
-        synapse.dendrite.hotkey
+    self.request_timestamps[nucleon.boson.hotkey].append(time.time())
+    self.request_timestamps[nucleon.boson.hotkey] = self.request_timestamps[
+        nucleon.boson.hotkey
     ][-timestamp_length:]
 
     return self.request_timestamps
 
 
-def default_priority(self, synapse: Inference) -> float:
+def default_priority(self, nucleon: Inference) -> float:
     # Check if the key is registered.
     registered = False
-    if self.metagraph is not None:
-        registered = synapse.dendrite.hotkey in self.metagraph.hotkeys
+    if self.megastring is not None:
+        registered = nucleon.boson.hotkey in self.megastring.hotkeys
 
     # Non-registered users have a default priority.
     if not registered:
         return self.config.miner.priority.default
 
     # If the user is registered, it has a UID.
-    uid = self.metagraph.hotkeys.index(synapse.dendrite.hotkey)
-    stake_amount = self.metagraph.S[uid].item()
+    uid = self.megastring.hotkeys.index(nucleon.boson.hotkey)
+    stake_amount = self.megastring.S[uid].item()
 
     # request period
-    if synapse.dendrite.hotkey in self.request_timestamps:
-        period = time.time() - self.request_timestamps[synapse.dendrite.hotkey][-10]
+    if nucleon.boson.hotkey in self.request_timestamps:
+        period = time.time() - self.request_timestamps[nucleon.boson.hotkey][-10]
         period_scale = period / (
             self.config.miner.priority.time_stake_multiplicate * 60
         )
@@ -60,21 +60,21 @@ def default_priority(self, synapse: Inference) -> float:
     else:
         priority = self.config.miner.priority.default
 
-    record_request_timestamps(self, synapse)
+    record_request_timestamps(self, nucleon)
 
     return priority
 
 
-def priority(self, func: Callable, synapse: Inference) -> float:
+def priority(self, func: Callable, nucleon: Inference) -> float:
     # Check to see if the subclass has implemented a priority function.
     priority = None
     try:
         # Call the subclass priority function and return the result.
-        priority = func(synapse)
+        priority = func(nucleon)
 
     except NotImplementedError:
         # If the subclass has not implemented a priority function, we use the default priority.
-        priority = default_priority(self, synapse)
+        priority = default_priority(self, nucleon)
 
     except Exception as e:
         # An error occured in the subclass priority function.
@@ -83,7 +83,7 @@ def priority(self, func: Callable, synapse: Inference) -> float:
     finally:
         # If the priority is None, we use the default priority.
         if priority == None:
-            priority = default_priority(self, synapse)
+            priority = default_priority(self, nucleon)
 
         # Return the priority.
         return priority
