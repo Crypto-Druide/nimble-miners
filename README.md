@@ -23,7 +23,8 @@ python3 -m venv nbenv
 source nbenv/bin/activate
 
 # install python3.9 or higher if not yet.
-q
+brew install python@3.9
+
 # upgrade pip
 python3 -m pip install --upgrade pip
 
@@ -32,7 +33,7 @@ python3 -m pip install -r requirements.txt
 python3 -m pip install -e .
 
 # test the repo setup
-cd nimble/nblm
+cd miners/nblm
 python3 miner.py -h
 
 # deactivate virtualenv
@@ -46,25 +47,25 @@ rm -rf nbenv
 Nimble contributors provide various miners any developer can run. Developers can add more miners as well.
 
 ### Nimble CLI: Wallet and Staking Management
-`nbcli` is the command line tool to interact with nimble network such token transfers, wallet management, staking and other operations.
+`nimcli` is the command line tool to interact with nimble network such token transfers, wallet management, staking and other operations.
 
 After creating wallets, please share your public keys to [Nimble Discord node-runners channel](https://discord.com/invite/nimble).
 
 ```bash
-# usage: nbcli <command> <command args>
-nbcli --help
+# usage: nimcli <command> <command args>
+nimcli --help
 
 # coldkey generation
-nbcli wallet new_coldkey --wallet.name miner
+nimcli wallet new_coldkey --wallet.name miner
 
 # hotkey generation
-nbcli wallet new_hotkey --wallet.name miner --wallet.hotkey default
+nimcli wallet new_hotkey --wallet.name miner --wallet.hotkey default
 
 # check wallet balance
-nbcli wallet overview --wallet.name miner
+nimcli wallet overview --wallet.name miner
 
 # unstake
-nbcli stake remove --wallet.name miner
+nimcli stake remove --wallet.name miner
 ```
 
 ### Miner Wallets
@@ -78,10 +79,10 @@ et up the miner's wallets:
 Set up the validator's wallets:
 
 ```bash
-nbcli wallet new_coldkey --wallet.name validator
+nimcli wallet new_coldkey --wallet.name validator
 ```
 ```bash
-nbcli wallet new_hotkey --wallet.name validator --wallet.hotkey default
+nimcli wallet new_hotkey --wallet.name validator --wallet.hotkey default
 ```
 
 ### Language Model Miner
