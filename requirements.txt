@@ -1,6 +1,6 @@
 ansible-vault==2.1.0
 backoff==2.2.1
-black==23.7.0g
+black==23.7.0
 click==8.0.4
 datasets==2.14.6
 deepspeed==0.13.1
