@@ -71,7 +71,10 @@ class VicunaMiner(Miner):
             help="Name/path of model to load. Also can be a filepath to the model weights (HF)",
         )
         parser.add_argument(
-            "--vicuna.device", type=str, help="Device to load model", default="cuda"
+            "--vicuna.device",
+            type=str,
+            help="Device to load model",
+            default="cuda",
         )
         parser.add_argument(
             "--vicuna.max_new_tokens",
@@ -143,7 +146,10 @@ class VicunaMiner(Miner):
             processed_history += self.config.vicuna.system_prompt
         for role, message in zip(roles, messages):
             if role == "system":
-                if not self.config.vicuna.do_prompt_injection or message != message[0]:
+                if (
+                    not self.config.vicuna.do_prompt_injection
+                    or message != message[0]
+                ):
                     processed_history += "" + message.strip() + " "
             if role == "Assistant":
                 processed_history += "ASSISTANT:" + message.strip() + "</s>"
@@ -161,7 +167,9 @@ class VicunaMiner(Miner):
         Returns:
             Prompting: A Synapse object with the generated completion added.
         """
-        history = self._process_history(roles=synapse.roles, messages=synapse.messages)
+        history = self._process_history(
+            roles=synapse.roles, messages=synapse.messages
+        )
         prompt = history + "ASSISTANT:"
         input_ids = self.tokenizer.encode(prompt, return_tensors="pt").to(
             self.config.vicuna.device

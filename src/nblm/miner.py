@@ -88,7 +88,10 @@ class NBLMMiner(Miner):
         NBLM model's generation settings, such as device, max length, and sampling method.
         """
         parser.add_argument(
-            "--nblm.device", type=str, help="Device to load model", default="cuda"
+            "--nblm.device",
+            type=str,
+            help="Device to load model",
+            default="cuda",
         )
         parser.add_argument(
             "--nblm.max_length",
@@ -127,10 +130,16 @@ class NBLMMiner(Miner):
             help="Whether to use deepspeed or not (if not, uses vanilla huggingface).",
         )
         parser.add_argument(
-            "--nblm.temperature", type=float, default=0.7, help="Sampling temperature."
+            "--nblm.temperature",
+            type=float,
+            default=0.7,
+            help="Sampling temperature.",
         )
         parser.add_argument(
-            "--nblm.model", type=str, default='cerebras/btlm-3b-8k-base', help="model use for mine"
+            "--nblm.model",
+            type=str,
+            default="cerebras/btlm-3b-8k-base",
+            help="model use for mine",
         )
 
     def __init__(self, *args, **kwargs):
@@ -162,7 +171,9 @@ class NBLMMiner(Miner):
             self.config.nblm.device = 0
         elif len(self.config.nblm.device.split(":")) == 2:
             try:
-                self.config.nblm.device = int(self.config.nblm.device.split(":")[1])
+                self.config.nblm.device = int(
+                    self.config.nblm.device.split(":")[1]
+                )
             except:
                 raise ValueError(
                     "Invalid device string: {}".format(self.config.nblm.device)
@@ -199,7 +210,10 @@ class NBLMMiner(Miner):
             processed_history += self.config.nblm.system_request
         for role, message in zip(roles, messages):
             if role == "system":
-                if not self.config.nblm.do_request_injection or message != messages[0]:
+                if (
+                    not self.config.nblm.do_request_injection
+                    or message != messages[0]
+                ):
                     processed_history += "system: " + message + "\n"
             if role == "assistant":
                 processed_history += "assistant: " + message + "\n"
@@ -216,7 +230,9 @@ class NBLMMiner(Miner):
         This method constructs a conversation history from the incoming request and uses
         the NBLM model to generate a response based on the provided context.
         """
-        history = self._process_history(roles=nucleon.roles, messages=nucleon.messages)
+        history = self._process_history(
+            roles=nucleon.roles, messages=nucleon.messages
+        )
         history += "assistant: "
         nb.logging.debug("History: {}".format(history))
         completion = (
