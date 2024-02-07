@@ -34,12 +34,16 @@ def read_requirements(path):
                     pkg_name = re.search(r"egg=([a-zA-Z0-9_-]+)", req.strip())
                     if pkg_name:
                         pkg_name = pkg_name.group(1)
-                        processed_requirements.append(pkg_name + " @ " + req.strip())
+                        processed_requirements.append(
+                            pkg_name + " @ " + req.strip()
+                        )
                 else:
                     pkg_name = re.search(r"/([a-zA-Z0-9_-]+)(\.git)?(@|$)", req)
                     if pkg_name:
                         pkg_name = pkg_name.group(1)
-                        processed_requirements.append(pkg_name + " @ " + req.strip())
+                        processed_requirements.append(
+                            pkg_name + " @ " + req.strip()
+                        )
             else:
                 processed_requirements.append(req)
         return processed_requirements
@@ -53,7 +57,7 @@ with open(path.join(here, "README.md"), encoding="utf-8") as f:
 
 # loading version from setup.py
 with codecs.open(
-    os.path.join(here, "model/__init__.py"), encoding="utf-8"
+    os.path.join(here, "src/__init__.py"), encoding="utf-8"
 ) as init_file:
     version_match = re.search(
         r"^__version__ = ['\"]([^'\"]*)['\"]", init_file.read(), re.M
