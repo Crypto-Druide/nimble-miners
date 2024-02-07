@@ -33,7 +33,7 @@ python3 -m pip install -r requirements.txt
 python3 -m pip install -e .
 
 # test the repo setup
-cd miners/nblm
+cd src/nblm
 python3 miner.py -h
 
 # deactivate virtualenv
@@ -46,46 +46,8 @@ rm -rf nbenv
 # Run as Miners
 Nimble contributors provide various miners any developer can run. Developers can add more miners as well.
 
-### Nimble CLI: Wallet and Staking Management
-`nimcli` is the command line tool to interact with nimble network such token transfers, wallet management, staking and other operations.
-
-After creating wallets, please share your public keys to [Nimble Discord node-runners channel](https://discord.com/invite/nimble).
-
-```bash
-# usage: nimcli <command> <command args>
-nimcli --help
-
-# coldkey generation
-nimcli wallet new_coldkey --wallet.name miner
-
-# hotkey generation
-nimcli wallet new_hotkey --wallet.name miner --wallet.hotkey default
-
-# check wallet balance
-nimcli wallet overview --wallet.name miner
-
-# unstake
-nimcli stake remove --wallet.name miner
-```
-
-### Miner Wallets
-Miners create wallets by themselves and register to start mining by contact Discord channel 
-et up the miner's wallets:
-
-```bash
-
-```
-
-Set up the validator's wallets:
-
-```bash
-nimcli wallet new_coldkey --wallet.name validator
-```
-```bash
-nimcli wallet new_hotkey --wallet.name validator --wallet.hotkey default
-```
-
-### Language Model Miner
+### Wallet Creation
+For wallet creation, please contact the team in [Nimble Discord node-runners channel](https://discord.com/invite/nimble).
 
 #### Miner Requirements
 The minimum machine requirements are:
@@ -102,11 +64,11 @@ create and manage virtualenv as detailed [above](https://github.com/nimble-techn
 
 ```bash
 # install nblm dependencies
-cd miners/nblm/
+cd src/nblm/
 python3 -m pip install -r requirements.txt
 
 # Example usage of the nblm miner
-python -m miners/nblm/miner.py
+python -m src/nblm/miner.py
     --netuid 1
     --wallet.name <your miner wallet>
     --wallet.hotkey <your miner hotkey>
