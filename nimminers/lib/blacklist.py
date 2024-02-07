@@ -18,9 +18,9 @@ import time
 import json
 import wandb
 import hashlib
-import nimble as nb
+import nimlib
 from typing import Union, Tuple, Callable, List
-from model.inference import Inference
+from inference import Inference
 
 
 async def is_request_in_cache(self, nucleon: Inference) -> bool:
@@ -97,7 +97,7 @@ def default_blacklist(self, nucleon: Inference) -> Union[Tuple[bool, str], bool]
 def blacklist(
     self, func: Callable, nucleon: Inference
 ) -> Union[Tuple[bool, str], bool]:
-    nb.logging.trace("run blacklist function")
+    nimlib.logging.trace("run blacklist function")
 
     # First check to see if the black list function is overridden by the subclass.
     does_blacklist = None
@@ -119,7 +119,7 @@ def blacklist(
 
     except Exception as e:
         # There was an error in their blacklist function.
-        nb.logging.error(f"Error in blacklist function: {e}")
+        nimlib.logging.error(f"Error in blacklist function: {e}")
         does_blacklist, reason = default_blacklist(self, nucleon)
 
     finally:
@@ -128,7 +128,7 @@ def blacklist(
             does_blacklist, reason = default_blacklist(self, nucleon)
 
         # Finally, log and return the blacklist result.
-        nb.logging.trace(f"blacklisted: {does_blacklist}, reason: {reason}")
+        nimlib.logging.trace(f"blacklisted: {does_blacklist}, reason: {reason}")
         if does_blacklist and self.config.wandb.on:
             wandb.log(
                 {

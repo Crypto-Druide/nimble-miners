@@ -16,9 +16,9 @@
 # DEALINGS IN THE SOFTWARE.
 
 import time
-import nimble as nb
+import nimlib
 
-from model.inference import Inference
+from inference import Inference
 from typing import List, Dict, Callable
 
 
@@ -78,7 +78,7 @@ def priority(self, func: Callable, nucleon: Inference) -> float:
 
     except Exception as e:
         # An error occured in the subclass priority function.
-        nb.logging.error(f"Error in priority function: {e}")
+        nimlib.logging.error(f"Error in priority function: {e}")
 
     finally:
         # If the priority is None, we use the default priority.

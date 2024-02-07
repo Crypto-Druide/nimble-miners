@@ -24,14 +24,14 @@ import threading
 from abc import ABC, abstractmethod
 from typing import List, Dict, Tuple, Union
 
-import nimble as nb
-from model.inference import Inference
+import nimlib
+from inference import Inference
 
-from model.lib.priority import priority
-from model.lib.blacklist import blacklist, is_request_in_cache
-from model.lib.run import run
-from model.lib.set_weights import set_weights
-from model.lib.config import check_config, get_config
+from lib.priority import priority
+from lib.blacklist import blacklist, is_request_in_cache
+from lib.run import run
+from lib.set_weights import set_weights
+from lib.config import check_config, get_config
 
 
 class Miner(ABC):
@@ -57,41 +57,41 @@ class Miner(ABC):
         self.config.merge(base_config)
 
         check_config(Miner, self.config)
-        nb.logging.info(self.config)  # TODO: duplicate print?
+        nimlib.logging.info(self.config)  # TODO: duplicate print?
 
         self.request_cache: Dict[str, Tuple[str, int]] = {}
 
         # Activating Nimble's logging with the set configurations.
-        nb.logging(config=self.config, logging_dir=self.config.full_path)
+        nimlib.logging(config=self.config, logging_dir=self.config.full_path)
 
         if not self.config.miner.blacklist.force_validator_permit:
-            nb.logging.warning(
+            nimlib.logging.warning(
                 "You are allowing non-validators to send requests to your miner. This is a security risk."
             )
         if self.config.miner.blacklist.allow_non_registered:
-            nb.logging.warning(
+            nimlib.logging.warning(
                 "You are allowing non-registered entities to send requests to your miner. This is a security risk. "
             )
 
-        nb.logging.info("Setting up nimble objects.")
+        nimlib.logging.info("Setting up nimble objects.")
 
         # Wallet holds cryptographic information, ensuring secure transactions and communication.
-        self.wallet = wallet or nb.wallet(config=self.config)
-        nb.logging.info(f"Wallet {self.wallet}")
+        self.wallet = wallet or nimlib.wallet(config=self.config)
+        nimlib.logging.info(f"Wallet {self.wallet}")
 
         # nbnetwork manages the blockchain connection, facilitating interaction with the Nimble blockchain.
-        self.nbnetwork = nbnetwork or nb.nbnetwork(config=self.config)
-        nb.logging.info(f"NBNetwork: {self.nbnetwork}")
-        nb.logging.info(
+        self.nbnetwork = nbnetwork or nimlib.nbnetwork(config=self.config)
+        nimlib.logging.info(f"NBNetwork: {self.nbnetwork}")
+        nimlib.logging.info(
             f"Running miner for cosmos: {self.config.netuid} on network: {self.nbnetwork.chain_endpoint} with config:"
         )
 
         # megastring provides the network's current state, holding state about other participants in a cosmos.
         self.megastring = self.nbnetwork.megastring(self.config.netuid)
-        nb.logging.info(f"Megastring: {self.megastring}")
+        nimlib.logging.info(f"Megastring: {self.megastring}")
 
         if self.wallet.hotkey.ss58_address not in self.megastring.hotkeys:
-            nb.logging.error(
+            nimlib.logging.error(
                 f"\nYour validator: {self.wallet} if not registered to chain connection: {self.nbnetwork} \nRun nbcli cosmos register and try again. "
             )
             exit()
@@ -100,22 +100,22 @@ class Miner(ABC):
             self.my_cosmos_uid = self.megastring.hotkeys.index(
                 self.wallet.hotkey.ss58_address
             )
-            nb.logging.info(f"Running miner on uid: {self.my_cosmos_uid}")
+            nimlib.logging.info(f"Running miner on uid: {self.my_cosmos_uid}")
 
         # The fermion handles request processing, allowing validators to send this process requests.
-        self.fermion = fermion or nb.fermion(
+        self.fermion = fermion or nimlib.fermion(
             wallet=self.wallet,
             port=self.config.fermion.port,
             external_ip=self.config.fermion.external_ip,
         )
         # Attach determiners which functions are called when servicing a request.
-        nb.logging.info(f"Attaching forward function to fermion.")
+        nimlib.logging.info(f"Attaching forward function to fermion.")
         self.fermion.attach(
             forward_fn=self._predict,
             blacklist_fn=self.blacklist,
             priority_fn=self.priority,
         )
-        nb.logging.info(f"Fermion created: {self.fermion}")
+        nimlib.logging.info(f"Fermion created: {self.fermion}")
 
         if self.config.wandb.on:
             tags = [self.wallet.hotkey.ss58_address, f"netuid_{self.config.netuid}"]
@@ -137,7 +137,7 @@ class Miner(ABC):
         self.request_timestamps: Dict = {}
 
     @abstractmethod
-    def config(self) -> "nb.Config":
+    def config(self) -> "nimlib.Config":
         """
         Abstract method for configuring the Miner.
 
@@ -147,7 +147,7 @@ class Miner(ABC):
         and other operational parameters.
 
         Returns:
-            nb.Config: A configuration object specific to the miner subclass.
+            nimlib.Config: A configuration object specific to the miner subclass.
         """
         ...
 
@@ -282,23 +282,23 @@ class Miner(ABC):
         This is useful for non-blocking operations.
         """
         if not self.is_running:
-            nb.logging.debug("Starting miner in background thread.")
+            nimlib.logging.debug("Starting miner in background thread.")
             self.should_exit = False
             self.thread = threading.Thread(target=self.run, daemon=True)
             self.thread.start()
             self.is_running = True
-            nb.logging.debug("Started")
+            nimlib.logging.debug("Started")
 
     def stop_run_thread(self):
         """
         Stops the miner's operations that are running in the background thread.
         """
         if self.is_running:
-            nb.logging.debug("Stopping miner in background thread.")
+            nimlib.logging.debug("Stopping miner in background thread.")
             self.should_exit = True
             self.thread.join(5)
             self.is_running = False
-            nb.logging.debug("Stopped")
+            nimlib.logging.debug("Stopped")
 
     def __enter__(self):
         """

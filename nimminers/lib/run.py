@@ -16,9 +16,9 @@
 # DEALINGS IN THE SOFTWARE.
 import time
 import wandb
-import nimble as nb
+import nimlib
 import traceback
-from model.inference import Inference
+from inference import Inference
 from .set_weights import set_weights
 
 
