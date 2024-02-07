@@ -18,7 +18,6 @@
 import re
 import os
 import codecs
-import pathlib
 from os import path
 from io import open
 from setuptools import setup, find_packages
@@ -30,16 +29,13 @@ def read_requirements(path):
         requirements = f.read().splitlines()
         processed_requirements = []
         for req in requirements:
-            # For git or other VCS links
             if req.startswith("git+") or "@" in req:
-                # check if "egg=" is present in the requirement string
                 if "egg=" in req:
                     pkg_name = re.search(r"egg=([a-zA-Z0-9_-]+)", req.strip())
                     if pkg_name:
                         pkg_name = pkg_name.group(1)
                         processed_requirements.append(pkg_name + " @ " + req.strip())
-                else:  # handle git links without "egg="
-                    # extracting package name from URL assuming it is the last part of the URL before any @ symbol
+                else:
                     pkg_name = re.search(r"/([a-zA-Z0-9_-]+)(\.git)?(@|$)", req)
                     if pkg_name:
                         pkg_name = pkg_name.group(1)
@@ -65,9 +61,9 @@ with codecs.open(
     version_string = version_match.group(1)
 
 setup(
-    name="model",
+    name="nimminers",
     version=version_string,
-    description="The flagship Nimble cosmos focused on text-based intellgience and comprehension.",
+    description="Nimble miners.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/nimble-technology/cosmos-1",
@@ -78,22 +74,4 @@ setup(
     license="MIT",
     python_requires=">=3.8",
     install_requires=requirements,
-    classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Developers",
-        "Topic :: Software Development :: Build Tools",
-        # Pick your license as you wish
-        "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Topic :: Scientific/Engineering",
-        "Topic :: Scientific/Engineering :: Mathematics",
-        "Topic :: Scientific/Engineering :: Artificial Intelligence",
-        "Topic :: Software Development",
-        "Topic :: Software Development :: Libraries",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-    ],
 )
