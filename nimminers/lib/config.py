@@ -17,10 +17,10 @@
 
 import os
 import argparse
-import nimble as nb
+import nimlib
 
 
-def check_config(cls, config: "nb.Config"):
+def check_config(cls, config: "nimlib.Config"):
     """
     Validates the given configuration for the Miner by ensuring all necessary settings
     and directories are correctly set up. It checks the config for fermion, wallet, logging,
@@ -28,19 +28,19 @@ def check_config(cls, config: "nb.Config"):
 
     Args:
         cls: The class reference, typically referring to the Miner class.
-        config (nb.Config): The configuration object holding various settings for the miner.
+        config (nimlib.Config): The configuration object holding various settings for the miner.
 
     Raises:
         Various exceptions can be raised by the check_config methods of fermion, wallet, logging,
         and nbnetwork if the configurations are not valid.
     """
-    nb.fermion.check_config(config)
-    nb.logging.check_config(config)
+    nimlib.fermion.check_config(config)
+    nimlib.logging.check_config(config)
     full_path = os.path.expanduser(
         "{}/{}/{}/{}".format(
             config.logging.logging_dir,
-            config.wallet.get("name", nb.defaults.wallet.name),
-            config.wallet.get("hotkey", nb.defaults.wallet.hotkey),
+            config.wallet.get("name", nimlib.defaults.wallet.name),
+            config.wallet.get("hotkey", nimlib.defaults.wallet.hotkey),
             config.miner.name,
         )
     )
@@ -49,14 +49,14 @@ def check_config(cls, config: "nb.Config"):
         os.makedirs(config.miner.full_path)
 
 
-def get_config() -> "nb.Config":
+def get_config() -> "nimlib.Config":
     """
     Initializes and retrieves a configuration object for the Miner. This function sets up
     and reads the command-line arguments to customize various miner settings. The function
     also sets up the logging directory for the miner.
 
     Returns:
-        nb.Config: A configuration object populated with settings from command-line arguments
+        nimlib.Config: A configuration object populated with settings from command-line arguments
                    and defaults where necessary.
 
     Note:
@@ -222,20 +222,20 @@ def get_config() -> "nb.Config":
     )
 
     # Adds nbnetwork specific arguments i.e. --nbnetwork.chain_endpoint ... --nbnetwork.network ...
-    nb.nbnetwork.add_args(parser)
+    nimlib.nbnetwork.add_args(parser)
 
     # Adds logging specific arguments i.e. --logging.debug ..., --logging.trace .. or --logging.logging_dir ...
-    nb.logging.add_args(parser)
+    nimlib.logging.add_args(parser)
 
     # Adds wallet specific arguments i.e. --wallet.name ..., --wallet.hotkey ./. or --wallet.path ...
-    nb.wallet.add_args(parser)
+    nimlib.wallet.add_args(parser)
 
     # Adds fermion specific arguments i.e. --fermion.port ...
-    nb.fermion.add_args(parser)
+    nimlib.fermion.add_args(parser)
 
     # Activating the parser to read any command-line inputs.
     # To print help message, run python3 template/miner.py --help
-    config = nb.config(parser)
+    config = nimlib.config(parser)
 
     # Logging captures events for diagnosis or understanding miner's behavior.
     config.full_path = os.path.expanduser(

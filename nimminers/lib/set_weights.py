@@ -17,14 +17,14 @@
 
 import torch
 import wandb
-import nimble as nb
+import nimlib
 
 
 def set_weights(
-    nbnetwork: "nb.nbnetwork",
+    nbnetwork: "nimlib.nbnetwork",
     netuid: int,
     uid: int,
-    wallet: "nb.wallet",
+    wallet: "nimlib.wallet",
     wandb_on=False,
 ) -> None:
     """
@@ -41,10 +41,10 @@ def set_weights(
     4. Optionally logs the weight-setting operation to Weights & Biases (wandb) for monitoring.
 
     Args:
-        nbnetwork (nb.nbnetwork): The Nimble object managing the blockchain connection.
+        nbnetwork (nimlib.nbnetwork): The Nimble object managing the blockchain connection.
         netuid (int): The unique identifier for the chain cosmos.
         uid (int): The unique identifier for the miner on the network.
-        wallet (nb.wallet): The miner's wallet holding cryptographic information.
+        wallet (nimlib.wallet): The miner's wallet holding cryptographic information.
         wandb_on (bool, optional): Flag to determine if logging to Weights & Biases is enabled. Defaults to False.
 
     Raises:
@@ -70,4 +70,4 @@ def set_weights(
     except Exception as e:
         if wandb_on:
             wandb.log({"set_weights": 0})
-        nb.logging.error(f"Failed to set weights on chain with exception: { e }")
+        nimlib.logging.error(f"Failed to set weights on chain with exception: { e }")

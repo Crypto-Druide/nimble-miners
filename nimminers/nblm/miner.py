@@ -36,8 +36,8 @@ from transformers import (
     StoppingCriteriaList,
 )
 
-from model.lib.miner import Miner
-from model.inference import Inference
+from lib.miner import Miner
+from inference import Inference
 
 
 class StopOnTokens(StoppingCriteria):
